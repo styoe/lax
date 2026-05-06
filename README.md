@@ -1,10 +1,25 @@
 # lax — Ticket ↔ GitHub sync for Claude Code
 
+> **lax** *(adj.)*  
+> c. 1400, "loose", from Latin *laxus* "wide, spacious, roomy," figuratively "loose, free, wide" , from PIE \*lag-so-, suffixed form of root \*sleg- "be slack, be languid."
+
 `lax` is a Claude Code plugin that keeps your tickets in lockstep with your actual Git activity. It reads GitHub via the `gh` CLI, reads/writes the configured ticket management software via that provider's MCP server, and reconciles the two with subagents under a strict, per-item approval loop.
 
-The core problem domain: **PR ↔ ticket linkage is sloppy in real teams**. Branches don't always reference IDs, descriptions get skipped, and tickets drift out of sync with shipped code. `lax` cleans that up retroactively, on demand, with a human in the loop for every write.
-
 Provider-agnostic: Linear, Jira, GitHub Issues, Asana, Trello, or any custom provider you can wire up an MCP server for. The plugin ships provider-neutral (no MCP server pre-registered) — `/lax:setup` walks you through wiring up your chosen provider's MCP in a one-time step.
+
+## Why lax
+
+PR ↔ ticket linkage is sloppy in real teams. Branches don't always reference Ticket IDs. PR descriptions get skipped. Direct-to-`main` commits never see a PR at all. Tickets stay open long after their work shipped, or get marked Done before any code actually merged. The result: your ticket tracker drifts out of sync with what really happened in Git, and the only way to reconstruct reality is to ask the person who did the work — or read every commit by hand.
+
+`lax` is for cleaning that up after the fact, on demand:
+
+- **You ship first, track later.** `lax` doesn't try to enforce discipline at PR time. It accepts that real-world linkage is sloppy and reconciles retroactively.
+- **Wide-net reconciler.** Matches by direct Ticket ID first, then existing PR links, then branch patterns, then keyword/title overlap. Uncertain matches are flagged `low confidence` for your judgment.
+- **Human in the loop on every write.** Every Ticket update or new Ticket goes through a per-item approval menu — see the evidence, edit if needed, apply or skip. Bulk-approve only when you've earned the trust.
+- **Audit trail.** Every write appends a JSON line to a local log, so "what did `lax` change last Tuesday?" is a `grep`, not a guess.
+- **No vendor lock-in.** Linear, Jira, GitHub Issues, Asana, Trello, or anything you can wire to an MCP server.
+
+The name comes from the etymology above: this tool is for the lax bookkeeper who ships code first and updates the tracker second (or never). It doesn't moralize about the habit — it just cleans up after it.
 
 ---
 
@@ -256,7 +271,9 @@ For non-Linear providers, you wire the matching MCP server yourself and add the 
 ## Project layout
 
 ```
-.claude-plugin/plugin.json    # plugin manifest (name, version, description)
+.claude-plugin/
+  plugin.json                 # plugin manifest (name, version, description, author, license, ...)
+  marketplace.json            # makes this repo installable as a marketplace ("/plugin marketplace add styoe/lax")
 commands/                     # one slash command per subcommand — thin wrappers around workflows/
   setup.md  project.md  test.md  sync.md  update.md  propose.md
 workflows/                    # full procedure for each subcommand, executed verbatim
@@ -267,6 +284,7 @@ agents/                       # two subagents the workflows spawn
 .claude/settings.local.json   # gitignored — local perms + your enabledMcpjsonServers
 CLAUDE.md                     # working agreement + conventions for Claude when editing this plugin
 README.md                     # this file
+LICENSE                       # MIT
 .gitignore                    # ignores .claude/settings.local.json + OS/editor noise
 ```
 

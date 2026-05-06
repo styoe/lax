@@ -1,5 +1,21 @@
 {
   "name": "lax",
   "version": "0.1.0",
-  "description": "Ticket <-> GitHub sync workflows: keep Tickets in lockstep with your actual Git activity"
+  "description": "Ticket <-> GitHub sync workflows: keep Tickets in lockstep with your actual Git activity",
+  "author": {
+    "name": "styoe"
+  },
+  "homepage": "https://github.com/styoe/lax",
+  "repository": "https://github.com/styoe/lax",
+  "license": "MIT",
+  "keywords": [
+    "linear",
+    "jira",
+    "github-issues",
+    "tickets",
+    "sync",
+    "pr",
+    "reconciliation",
+    "productivity"
+  ]
 }

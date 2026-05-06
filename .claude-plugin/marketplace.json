@@ -1,0 +1,16 @@
+{
+  "name": "lax",
+  "description": "Ticket <-> GitHub sync workflows for Claude Code — keep your tickets in lockstep with your actual Git activity, across Linear, Jira, GitHub Issues, Asana, Trello, or any custom provider.",
+  "owner": {
+    "name": "styoe"
+  },
+  "plugins": [
+    {
+      "name": "lax",
+      "source": "./",
+      "description": "Ticket <-> GitHub sync workflows: keep Tickets in lockstep with your actual Git activity",
+      "version": "0.1.0",
+      "category": "productivity"
+    }
+  ]
+}

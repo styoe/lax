@@ -16,7 +16,9 @@ The user picks the ticket management software during `/lax:setup`. Linear, Jira,
 ## Layout
 
 ```
-.claude-plugin/plugin.json    # plugin manifest (name, version, description)
+.claude-plugin/
+  plugin.json                 # plugin manifest (name, version, description, author, license, ...)
+  marketplace.json            # makes this repo installable as a marketplace
 commands/                     # one slash command per subcommand — thin wrappers around workflows/
   setup.md  project.md  test.md  sync.md  update.md  propose.md
 workflows/                    # full procedure for each subcommand, executed verbatim
@@ -24,6 +26,7 @@ workflows/                    # full procedure for each subcommand, executed ver
 agents/                       # two subagents the workflows spawn
   github-activity-gatherer.md   # gh CLI -> structured JSON + theme clusters
   ticket-reconciler.md          # pure reasoning, no tools, returns proposal
+LICENSE                       # MIT
 .claude/settings.local.json   # gitignored — local perms + the user's enabledMcpjsonServers
 ```
 
