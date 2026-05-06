@@ -1,0 +1,5 @@
+{
+  "name": "lax",
+  "version": "0.1.0",
+  "description": "Ticket <-> GitHub sync workflows: keep Tickets in lockstep with your actual Git activity"
+}

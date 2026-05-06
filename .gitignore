@@ -1,0 +1,16 @@
+# Claude Code local settings (per-machine permissions, not for sharing)
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
