@@ -40,7 +40,7 @@ gh auth status
 /lax:sync 2026-04-01
 ```
 
-Walk through `/lax:setup` once. After that the four day-to-day commands are `/lax:test`, `/lax:sync`, `/lax:update <ticket-id>`, and `/lax:propose [days]`. Switch contexts with `/lax:project [key]`.
+Walk through `/lax:setup` once. After that the day-to-day commands are `/lax:test`, `/lax:sync`, `/lax:update <ticket-id>`, `/lax:propose [days]`, and `/lax:standup [day|week]`. Switch contexts with `/lax:project [key]`.
 
 ---
 
@@ -106,6 +106,14 @@ Fill in a single Ticket using GitHub evidence in the active repo. The reconciler
 Find work in the active repo with no matching Ticket in the active Project, and propose creating Tickets for it. Default lookback is 7 days. The reconciler runs in `propose` mode (creates only). Per-item edit walk, then creates the Tickets and updates `last_sync[<active>].propose`.
 
 Each created Ticket gets a prospective-format description (`## Problem` / `## Proposed solution`) plus an outcome comment with PR refs and what shipped — see "How writes work" below.
+
+### `/lax:standup [day|week]`
+
+Read-only standup write-up of recent activity for the active lax project. Pulls the user's GitHub activity (PRs authored / reviewed, commits, comments) via the gatherer and the active Project's recent Ticket activity via the configured provider's MCP, joins the two sides, and prints a sectioned narrative — Shipped / In progress / Reviews / Blockers / Up next / Untracked — ending in a paste-ready summary paragraph.
+
+Default window is `week`; pass `day` for a 24-hour window. No writes, no approval loop, does not update `last_sync`.
+
+If a Ticket changed state inside the configured window but the join finds no matching PR/commit/branch in that window, `lax` automatically widens the GitHub lookback in one-week steps — `week` → ~14d → ~21d → ~28d → ~35d → capped at 40d — re-running the join only for the under-explained Tickets until each has attributable evidence (or the cap is hit). The window for what counts as "in-window activity" in the write-up doesn't move; only the GitHub lookback used to attribute Tickets does. Pre-window evidence is cited explicitly (e.g. "Ticket closed today; PR merged 13 days ago"), never silently filed under "this week".
 
 ---
 
@@ -275,9 +283,9 @@ For non-Linear providers, you wire the matching MCP server yourself and add the 
   plugin.json                 # plugin manifest (name, version, description, author, license, ...)
   marketplace.json            # makes this repo installable as a marketplace ("/plugin marketplace add styoe/lax")
 commands/                     # one slash command per subcommand — thin wrappers around workflows/
-  setup.md  project.md  test.md  sync.md  update.md  propose.md
+  setup.md  project.md  test.md  sync.md  update.md  propose.md  standup.md
 workflows/                    # full procedure for each subcommand, executed verbatim
-  setup.md  project.md  test.md  sync.md  update.md  propose.md
+  setup.md  project.md  test.md  sync.md  update.md  propose.md  standup.md
 agents/                       # two subagents the workflows spawn
   github-activity-gatherer.md   # gh CLI -> structured JSON + theme clusters
   ticket-reconciler.md          # pure reasoning, no tools, returns proposal

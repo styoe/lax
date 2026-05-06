@@ -20,9 +20,9 @@ The user picks the ticket management software during `/lax:setup`. Linear, Jira,
   plugin.json                 # plugin manifest (name, version, description, author, license, ...)
   marketplace.json            # makes this repo installable as a marketplace
 commands/                     # one slash command per subcommand — thin wrappers around workflows/
-  setup.md  project.md  test.md  sync.md  update.md  propose.md
+  setup.md  project.md  test.md  sync.md  update.md  propose.md  standup.md
 workflows/                    # full procedure for each subcommand, executed verbatim
-  setup.md  project.md  test.md  sync.md  update.md  propose.md
+  setup.md  project.md  test.md  sync.md  update.md  propose.md  standup.md
 agents/                       # two subagents the workflows spawn
   github-activity-gatherer.md   # gh CLI -> structured JSON + theme clusters
   ticket-reconciler.md          # pure reasoning, no tools, returns proposal
@@ -48,6 +48,7 @@ All read/write subcommands operate on the **active lax project** — a `(github_
 - **sync** — full reconciliation for the active lax project since `last_sync[<active>].sync` (or arg date). Spawns gatherer → pulls Tickets → spawns reconciler in `sync` mode → approval loop → applies via the configured provider's MCP → updates `last_sync[<active>].sync`.
 - **update <ticket-id>** — fill one Ticket from GH evidence in the active repo. Reconciler runs in `update` mode (≤ 1 update item). Approval loop, then write.
 - **propose [days]** — find work in the active repo with no matching Ticket in the active Project. Reconciler runs in `propose` mode (creates only). Per-item approval, then create Tickets and update `last_sync[<active>].propose`.
+- **standup [day|week]** — read-only standup write-up of recent Ticket + GitHub activity for the active lax project. Default window `week`. Spawns the gatherer, pulls Tickets via the configured provider's MCP, joins the two sides in-workflow (no reconciler), and prints a sectioned narrative ending in a paste-ready summary paragraph. No writes; does not update `last_sync`.
 
 ## Subagents
 
@@ -94,7 +95,7 @@ All read/write subcommands operate on the **active lax project** — a `(github_
 
   **Per-workflow required packs:**
   - `setup` — `lax-state`; plus `linear-mcp-probe` + `linear-read` when configuring a Linear-backed project.
-  - `test` — `lax-state`, `gh-read`, `linear-read` (or the configured provider's read pack).
+  - `test` / `standup` — `lax-state`, `gh-read`, `linear-read` (or the configured provider's read pack).
   - `sync` / `update` / `propose` — `lax-state`, `gh-read`, `linear-read`, `linear-write`.
 
   **`settings.local.json` mirrors the union of all projects' enabled packs.** When the user toggles a project's packs via `/lax:setup permissions`, Lax recomputes the union and writes it to `<project-root>/.claude/settings.local.json` `permissions.allow`. Adds are exact-string additions of the pack's rules. Removes are surgical: only strings that exactly match a Lax pack rule **and** that no other project still enables. User-added entries that don't match Lax's pack catalog are never touched.
