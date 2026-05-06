@@ -99,7 +99,7 @@ First, print a one-paragraph summary of the proposal (counts of updates and crea
 5. On apply, behavior splits by item type:
 
    **For an `update` item (existing Ticket):**
-   - Append the Lax footer to the `comment_to_add` (and to any updated description) just before sending — blank line, then `*Done with [Lax](https://example.com)*`. Skip the append if the body already contains `[Lax](https://example.com)`.
+   - Append the Lax footer to the `comment_to_add` (and to any updated description) just before sending — blank line, then `*Done with [Lax](https://github.com/styoe/lax)*`. Skip the append if the body already contains `[Lax](https://github.com/styoe/lax)`.
    - Write via the configured ticket provider's MCP server (state change if any, plus comment).
    - Append a log entry to `log.jsonl` (current `session_id`, action, ticket_id, comment_id if any, fields_written, evidence, confidence, result).
 

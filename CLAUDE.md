@@ -63,9 +63,9 @@ All read/write subcommands operate on the **active lax project** — a `(github_
 - **Provider-agnostic by design.** Workflows refer to "the configured ticket provider's MCP server"; only `setup` mentions specific providers by name (and only inside the per-provider wiring snippets in step 3). The `ticket-reconciler` subagent reasons about Tickets generically, regardless of provider. Nothing in the plugin assumes Linear at runtime — it's only the most-tested provider and the one with worked-out MCP wiring guidance in setup.
 - **Lax-authored content carries a footer.** Any text Lax writes to the ticket provider — Ticket comments and Ticket descriptions (new or updated) — has this exact footer appended at **write time** (after user approval, not shown in the proposal diff), separated from the body by a blank line:
   ```
-  *Done with [Lax](https://example.com)*
+  *Done with [Lax](https://github.com/styoe/lax)*
   ```
-  Pure markdown only — no HTML. Linear and similar Tiptap-based renderers strip arbitrary HTML, so `<sub>`/`<small>` would render as literal text. Italic + a markdown link is the most cross-provider-portable approximation of "small attribution text". Idempotent: if the body the user approved already contains the substring `[Lax](https://example.com)`, do not append again. The footer applies only to comments and descriptions — not to titles, labels, state changes, or links.
+  Pure markdown only — no HTML. Linear and similar Tiptap-based renderers strip arbitrary HTML, so `<sub>`/`<small>` would render as literal text. Italic + a markdown link is the most cross-provider-portable approximation of "small attribution text". Idempotent: if the body the user approved already contains the substring `[Lax](https://github.com/styoe/lax)`, do not append again. The footer applies only to comments and descriptions — not to titles, labels, state changes, or links.
 - **Created Tickets follow a prospective format.** When Lax creates a new Ticket (`/lax:propose` or `/lax:sync` create items), the description is written as if authored *before* the work started — never as a retroactive narrative. Required structure:
   ```
   ## Problem

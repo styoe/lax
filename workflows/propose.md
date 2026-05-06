@@ -49,7 +49,7 @@ Walk through every proposed new Ticket one at a time, in reconciler order. For e
 5. On create:
    a. **Format the description** in the prospective `## Problem` / `## Proposed solution` form (see CLAUDE.md "Created Tickets follow a prospective format"). Do not include a retroactive "what was done" section.
    b. **Infer state and assignee** (see CLAUDE.md "Created Tickets get assignee + state inferred from evidence"): default `assignee: "me"`, default `state` from linked PR evidence (all merged → Done; any open → In Progress; otherwise provider default).
-   c. **Append the Lax footer** to the description just before sending — blank line, then `*Done with [Lax](https://example.com)*`. Skip the append if the description already contains `[Lax](https://example.com)`.
+   c. **Append the Lax footer** to the description just before sending — blank line, then `*Done with [Lax](https://github.com/styoe/lax)*`. Skip the append if the description already contains `[Lax](https://github.com/styoe/lax)`.
    d. **Create the Ticket** via the configured ticket provider's MCP server (in the active lax project's Project) with `links` set from `suggested_links` so PRs become proper link-attachments.
    e. **Post the "what was done" comment** on the new Ticket as a second write — narrative covering the actual outcome, PR refs, and any in-flight notes — Lax footer appended.
    f. **Log both writes** to `log.jsonl` (current `session_id`; one `issue_create` entry, one `comment_create` entry).

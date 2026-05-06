@@ -137,10 +137,10 @@ Picking **edit** prompts for the field name (or a concrete change like "remove l
 Every comment and Ticket description Lax writes gets this footer appended at write time, after a blank line:
 
 ```
-*Done with [Lax](https://example.com)*
+*Done with [Lax](https://github.com/styoe/lax)*
 ```
 
-Appended after your approval — it isn't shown in the proposal diff, so your edits to the body don't fight with the rule. Idempotent: skipped if the body already contains `[Lax](https://example.com)`.
+Appended after your approval — it isn't shown in the proposal diff, so your edits to the body don't fight with the rule. Idempotent: skipped if the body already contains `[Lax](https://github.com/styoe/lax)`.
 
 The Lax convention is pure markdown (no HTML), because Linear/Tiptap and similar renderers strip arbitrary HTML. Italic + a markdown link is the most cross-provider-portable approximation of "small attribution text".
 
