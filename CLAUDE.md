@@ -65,7 +65,7 @@ All read/write subcommands operate on the **active lax project** — a `(github_
   ```
   *Done with [Lax](https://github.com/styoe/lax)*
   ```
-  Pure markdown only — no HTML. Linear and similar Tiptap-based renderers strip arbitrary HTML, so `<sub>`/`<small>` would render as literal text. Italic + a markdown link is the most cross-provider-portable approximation of "small attribution text". Idempotent: if the body the user approved already contains the substring `[Lax](https://github.com/styoe/lax)`, do not append again. The footer applies only to comments and descriptions — not to titles, labels, state changes, or links.
+  Pure markdown only — no HTML. Linear and similar Tiptap-based renderers strip arbitrary HTML, so `<sub>`/`<small>` would render as literal text. Italic + a markdown link is the most cross-provider-portable approximation of "small attribution text". Idempotent — fuzzy detection: skip the append if the body already contains the substring `github.com/styoe/lax` (case-insensitive), regardless of surrounding markdown. The URL is the invariant token, so this matches the canonical `*Done with [Lax](https://github.com/styoe/lax)*` and any renderer-mangled variant such as `*Done with *[*Lax*](<https://github.com/styoe/lax>)` (which Linear's description editor produces) or a bare-URL `Done with https://github.com/styoe/lax`. The footer applies only to comments and descriptions — not to titles, labels, state changes, or links.
 - **Created Tickets follow a prospective format.** When Lax creates a new Ticket (`/lax:propose` or `/lax:sync` create items), the description is written as if authored *before* the work started — never as a retroactive narrative. Required structure:
   ```
   ## Problem

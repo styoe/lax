@@ -140,7 +140,7 @@ Every comment and Ticket description Lax writes gets this footer appended at wri
 *Done with [Lax](https://github.com/styoe/lax)*
 ```
 
-Appended after your approval — it isn't shown in the proposal diff, so your edits to the body don't fight with the rule. Idempotent: skipped if the body already contains `[Lax](https://github.com/styoe/lax)`.
+Appended after your approval — it isn't shown in the proposal diff, so your edits to the body don't fight with the rule. Idempotent (fuzzy): skipped if the body already contains the substring `github.com/styoe/lax` (case-insensitive). The URL is the invariant token, so it matches the canonical form, autolinks (`<https://…>`), and renderer-mangled variants (e.g. Linear's description editor sometimes writes the footer as `*Done with *[*Lax*](<https://github.com/styoe/lax>)`) — re-syncs against an existing Ticket won't double-append.
 
 The Lax convention is pure markdown (no HTML), because Linear/Tiptap and similar renderers strip arbitrary HTML. Italic + a markdown link is the most cross-provider-portable approximation of "small attribution text".
 

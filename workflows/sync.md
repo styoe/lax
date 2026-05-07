@@ -22,26 +22,31 @@ If the subcommand argument was provided, use it as `since` and skip the rest of 
 
 Otherwise, propose a cutoff. The goal is to avoid reconciling stale items — pick a date that captures the user's recent activity without dragging in old, settled work.
 
-### 2a. Probe both sides (light — dates only)
+### 2a. Probe all three signals (light — dates only)
 
 - **Tickets:** fetch up to 20 of the most recently updated Tickets in `ticket_project_id` (sort by updated date desc). Capture only `updatedAt` per Ticket.
-- **GitHub:** fetch up to 20 of the user's most recently updated PRs in `github_repo`:
+- **GitHub PRs:** fetch up to 20 of the user's most recently updated PRs in `github_repo`:
   ```
   gh search prs --author=<github_handle> --repo=<github_repo> --sort=updated --limit=20 --json updatedAt
   ```
+- **GitHub commits:** fetch up to 20 of the user's most recent commits in `github_repo` — this catches direct-to-default-branch pushes and work on branches that don't yet have a PR:
+  ```
+  gh search commits --author=<github_handle> --repo=<github_repo> --sort=committer-date --limit=20 --json commit
+  ```
+  Each item's date lives at `.commit.committer.date`.
 
 ### 2b. Build candidate cutoffs
 
 Compute candidates from the probe data and the config. Drop any candidate that resolves to a date in the future or duplicates another candidate (within a day).
 
 1. **Last sync** — `last_sync[active_project].sync` if it exists.
-2. **After the last quiet period** — the date just after the most recent gap > 7 days in the combined updated-date timeline (Tickets + PRs merged, sorted desc). If no such gap exists in the probed data, omit this option.
+2. **After the last quiet period** — the date just after the most recent gap > 7 days in the combined updated-date timeline (Tickets + PRs + commits, sorted desc). If no such gap exists in the probed data, omit this option.
 3. **7 days ago** — `now - 7d`.
 4. **30 days ago** — `now - 30d`.
-5. **Earliest item in the probed window** — the oldest `updatedAt` across the 40 probed items (ensures a fully bounded window).
+5. **Earliest item in the probed window** — the oldest date across the up-to-60 probed items (ensures a fully bounded window).
 6. **Custom** — user enters an ISO-8601 / `YYYY-MM-DD` date.
 
-For each candidate, count how many of the 40 probed items fall after it (Tickets vs PRs broken out) so the user can see the rough scope.
+For each candidate, count how many of the probed items fall after it (Tickets / PRs / commits broken out) so the user can see the rough scope.
 
 ### 2c. Present and wait
 
@@ -49,11 +54,11 @@ Show the candidates as a numbered list with rationale and counts, e.g.:
 
 ```
 Cutoff options:
-  1. 2026-04-12 — last sync — would include 8 Tickets, 6 PRs
-  2. 2026-04-22 — after the last quiet period (gap 2026-04-15..2026-04-22) — 5 Tickets, 4 PRs
-  3. 2026-04-28 — 7 days ago — 3 Tickets, 3 PRs
-  4. 2026-04-05 — 30 days ago — 12 Tickets, 9 PRs
-  5. 2026-03-10 — earliest probed item — 20 Tickets, 20 PRs
+  1. 2026-04-12 — last sync — would include 8 Tickets, 6 PRs, 23 commits
+  2. 2026-04-22 — after the last quiet period (gap 2026-04-15..2026-04-22) — 5 Tickets, 4 PRs, 14 commits
+  3. 2026-04-28 — 7 days ago — 3 Tickets, 3 PRs, 9 commits
+  4. 2026-04-05 — 30 days ago — 12 Tickets, 9 PRs, 30 commits
+  5. 2026-03-10 — earliest probed item — 20 Tickets, 20 PRs, 20 commits
   6. custom — enter your own date
 
 Pick a number, or enter an ISO-8601 / YYYY-MM-DD date.
@@ -99,7 +104,7 @@ First, print a one-paragraph summary of the proposal (counts of updates and crea
 5. On apply, behavior splits by item type:
 
    **For an `update` item (existing Ticket):**
-   - Append the Lax footer to the `comment_to_add` (and to any updated description) just before sending — blank line, then `*Done with [Lax](https://github.com/styoe/lax)*`. Skip the append if the body already contains `[Lax](https://github.com/styoe/lax)`.
+   - Append the Lax footer to the `comment_to_add` (and to any updated description) just before sending — blank line, then `*Done with [Lax](https://github.com/styoe/lax)*`. Skip the append if the body already contains the substring `github.com/styoe/lax` (case-insensitive — matches mangled forms like `[*Lax*](<…>)` too).
    - Write via the configured ticket provider's MCP server (state change if any, plus comment).
    - Append a log entry to `log.jsonl` (current `session_id`, action, ticket_id, comment_id if any, fields_written, evidence, confidence, result).
 
